@@ -22,7 +22,7 @@ public class TaskManager {
                 String content = new String(Files.readAllBytes(Paths.get(FILE_PATH)));
                 return parseTasks(content);
             } else {
-                return new ArrayList<>();
+                return tasks;
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -42,7 +42,11 @@ public class TaskManager {
     }
 
     public void addTask(Task task) {
-        task.setId((tasks.size() + 1));
+        if (tasks.isEmpty()) {
+            task.setId(1);
+        } else {
+            task.setId(tasks.getLast().getId() + 1);
+        }
         task.setStatus(TaskStatus.TODO);
         task.setCreatedAt(LocalDateTime.now().withDayOfMonth(1));
         task.setUpdateAt(LocalDateTime.now().withDayOfMonth(1));
@@ -86,7 +90,7 @@ public class TaskManager {
     }
 
     public void deleteTask(int id) {
-        tasks.removeIf(task -> task.equals(id));
+        tasks.removeIf(task -> id == task.getId());
         saveTasks();
     }
 
@@ -129,6 +133,8 @@ public class TaskManager {
                     }
                     taskList.add(task);
                 }
+            }else {
+                return taskList;
             }
         }
         return taskList;
